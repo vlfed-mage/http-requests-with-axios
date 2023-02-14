@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 import Header from '../header';
@@ -19,24 +19,29 @@ const sortRecords = (records) => {
     });
 }
 
-const Container = () => {
+const Container = ({ setShowApp }) => {
     const [records, setRecords] = useState([]),
-    [liveText, setLiveText] = useState('');
+    [liveText, setLiveText] = useState(''),
+    isMounted = useRef(true);
 
     useEffect(() => {
-        axios.get('/api/records')
-            .then(({ data }) => setRecords(sortRecords(data)))
+        axios.get('/api/records').then(({ data }) => {
+            if (isMounted) setRecords(sortRecords(data))
+        })
+        return () => {
+            isMounted.current = false
+        }
     }, [])
 
     const onSubmit = (entry) => {
-        axios.post('/api/records', entry)
-            .then(({ data }) => {
+        axios.post('/api/records', entry).then(({ data }) => {
+            if (isMounted) {
                 setRecords(sortRecords([...records, data]))
                 setLiveText(`${ entry.recordName } successfully added.`)
-            })
+            }
+        })
+        setShowApp(false)
     };
-
-    console.log(records)
 
     return (
         <Fragment>
@@ -59,4 +64,9 @@ const Container = () => {
     )
 };
 
-export default Container;
+const Wrapper = () => { // force to unmount component
+    const [showApp, setShowApp] = useState(true);
+    return showApp && <Container setShowApp={ setShowApp } />
+}
+
+export default Wrapper;
