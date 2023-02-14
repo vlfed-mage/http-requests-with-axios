@@ -22,6 +22,17 @@ const records = [
 
 app.get('/api/records', (req, res) => {
     res.send(records)
+});
+
+app.post('/api/records', (req, res) => {
+    const newRecord = {
+        ...req.body,
+        id: records.reduce((acc, curr) => {
+            return curr.id > acc ? curr.id : acc;
+        }, 0) + 1
+    };
+    records.push(newRecord);
+    res.send(newRecord);
 })
 
 app.listen(port, () => {
