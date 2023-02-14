@@ -9,18 +9,18 @@ import './container.scss';
 
 const Container = () => {
     const [records, setRecords] = useState([]),
-        [liveText, setLiveText] = useState(''),
+    [liveText, setLiveText] = useState(''),
 
-        onSubmit = (entry) => {
-            setRecords(
-                [...records, entry].sort((a, b) => {
-                    if (a.recordName > b.recordName) return 1;
-                    if (a.recordName < b.recordName) return -1;
-                    return 0;
-                }) // sorting array before setting it on state guaranty it's run ones when the state is calculated
-            );
-            setLiveText(`${ entry.recordName } successfully added.`)
-        };
+    onSubmit = (entry) => {
+        setRecords(
+            [...records, entry].sort((a, b) => {
+                if (a.recordName > b.recordName) return 1;
+                if (a.recordName < b.recordName) return -1;
+                return 0;
+            }) // sorting array before setting it on state guaranty it's run ones when the state is calculated
+        );
+        setLiveText(`${ entry.recordName } successfully added.`)
+    };
 
     return (
         <Fragment>
