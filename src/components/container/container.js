@@ -19,28 +19,34 @@ const sortRecords = (records) => {
     });
 }
 
-const Container = ({ setShowApp }) => {
+const Container = () => {
     const [records, setRecords] = useState([]),
     [liveText, setLiveText] = useState(''),
     isMounted = useRef(true);
 
     useEffect(() => {
-        axios.get('/api/records').then(({ data }) => {
-            if (isMounted) setRecords(sortRecords(data))
-        })
+        ( async () => {
+            const { data } = await axios.get('/api/records', {
+                headers: {
+                    'Cache-Control': 'private',
+                    'X-Custom-Value': 'some-value'
+                }
+            })
+            if (isMounted) {
+                setRecords(sortRecords(data))
+            }
+        })();
         return () => {
             isMounted.current = false
         }
     }, [])
 
-    const onSubmit = (entry) => {
-        axios.post('/api/records', entry).then(({ data }) => {
-            if (isMounted) {
-                setRecords(sortRecords([...records, data]))
-                setLiveText(`${ entry.recordName } successfully added.`)
-            }
-        })
-        setShowApp(false)
+    const onSubmit = async (entry) => {
+        const { data } = await axios.post('/api/records', entry);
+        if (isMounted) {
+            setRecords(sortRecords([...records, data]))
+            setLiveText(`${ entry.recordName } successfully added.`)
+        }
     };
 
     return (
@@ -64,9 +70,4 @@ const Container = ({ setShowApp }) => {
     )
 };
 
-const Wrapper = () => { // force to unmount component
-    const [showApp, setShowApp] = useState(true);
-    return showApp && <Container setShowApp={ setShowApp } />
-}
-
-export default Wrapper;
+export default Container;
