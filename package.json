@@ -4,7 +4,7 @@
   "description": "HTTP requests with axios",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"webpack serve --config base.config.js\" \"json-server --watch db.json --port 5000 --delay 1000 --routes routes.json\"",
+    "start": "webpack serve --config base.config.js",
     "build": "export NODE_ENV=production&& webpack --config base.config.js"
   },
   "browserslist": [
@@ -64,6 +64,8 @@
   },
   "dependencies": {
     "@emotion/css": "^11.10.5",
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2",
     "node-sass": "^7.0.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
